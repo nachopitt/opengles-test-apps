@@ -1,5 +1,7 @@
 #include <EGL/egl.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 const char* eglGetErrorStr(EGLint eglError);
 
@@ -29,6 +31,33 @@ int main(int argc, char* argv[]) {
         EGL_NONE
     };
     EGLContext context;
+
+    int width = 1280;
+    int height = 480;
+    char fb_multi_buffer[12] = "";
+    char device[] = "/dev/dri/card0";
+
+    int option_arg_index = 1;
+    while (option_arg_index < argc) {
+        if (strcmp(argv[option_arg_index], "--width") == 0) {
+            width = atoi(argv[++option_arg_index]);
+        }
+        else if (strcmp(argv[option_arg_index], "--height") == 0) {
+            height = atoi(argv[++option_arg_index]);
+        }
+        else if (strcmp(argv[option_arg_index], "--device") == 0) {
+            option_arg_index++;
+            snprintf(device, strlen(argv[option_arg_index]) + 1, "%s", argv[option_arg_index]);
+        }
+        else if (strcmp(argv[option_arg_index], "--fb-multi-buffer") == 0) {
+            option_arg_index++;
+            snprintf(fb_multi_buffer, strlen(argv[option_arg_index]) + 1, "%s", argv[option_arg_index]);
+        }
+
+        option_arg_index++;
+    }
+
+    printf("Application parameters: \n\tWidth=%d\n\tHeight=%d\n\tDevice=%s\n\tFB_MULTI_BUFFER=%s\n", width, height, device, fb_multi_buffer);
 
     display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     if (display == EGL_NO_DISPLAY) {
